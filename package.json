@@ -1,0 +1,9 @@
+{
+  "name": "waveguide-management-system",
+  "private": true,
+  "scripts": {
+    "build": "mvn clean package",
+    "start": "mvn spring-boot:run",
+    "test": "mvn test"
+  }
+}
