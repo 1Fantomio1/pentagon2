@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { WaveguidesPage } from '@/pages/WaveguidesPage';
 import { WaveguideDetailsPage } from '@/pages/WaveguideDetailsPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
             <Route path="/waveguides/:id" element={<WaveguideDetailsPage />} />
           </Route>
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AuthProvider>
   );
