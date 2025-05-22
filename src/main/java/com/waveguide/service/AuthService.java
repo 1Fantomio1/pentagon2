@@ -5,11 +5,13 @@ import com.waveguide.model.dto.request.LoginRequest;
 import com.waveguide.model.dto.request.UserRegistrationRequest;
 import com.waveguide.model.dto.response.AuthResponse;
 import com.waveguide.model.entity.User;
+import com.waveguide.repository.UserRepository;
 import com.waveguide.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UserService userService;
     private final LogService logService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public AuthResponse register(UserRegistrationRequest request) {
@@ -28,6 +32,8 @@ public class AuthService {
         
         String token = tokenProvider.generateToken(user);
         long expiresIn = tokenProvider.getExpirationFromToken(token).getTime();
+        
+        logService.logUserAction(user, "REGISTRATION", "User registered successfully");
         
         return AuthResponse.builder()
                 .token(token)
@@ -44,7 +50,7 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
             
-            User user = userService.getUserByEmail(request.getEmail())
+            User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new AuthenticationException("User not found"));
             
             String token = tokenProvider.generateToken(user);
